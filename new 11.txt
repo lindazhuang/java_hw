@@ -1,0 +1,80 @@
+SELECT * FROM(
+			SELECT order_man,
+      order_no,   
+					 order_dt,   
+					 (select tblcode_detail.code_name from tblcode_detail where tblcode_detail.code_id=order_type and tblcode_detail.item_id = 'O01'  and display_seq  <> 0) as order_type,   
+					 (select tblcode_detail.code_name from tblcode_detail where tblcode_detail.code_id=order_status and tblcode_detail.item_id = 'O02') as order_status,
+					 from_dt,
+					 to_char( to_date(from_dt, 'YYYYMMDD'), 'D' ) as days,
+					 sale_man,
+					 creator,
+					 sale_dept_id,   
+					 dept_id,
+					 title_id,
+					 TITLE_ZIP_CODE,   
+                     TITLE_ADDR,   
+                     POST_ZIP_CODE,   
+                     POST_ADDR,
+					 (select tblcode_detail.code_name from tblcode_detail where tblcode_detail.code_id=prod_status and tblcode_detail.item_id = 'O03') as prod_status,
+					 prod_desc
+			  FROM (
+							  SELECT tblord_main.order_no,   
+										tblord_main.sale_man, 
+										tblord_main.creator,  
+										tblord_main.sale_dept_id,   
+										tblord_main.order_dt,   
+										tblord_main.order_type,   
+										tblord_main.order_status,      
+										tblord_main.order_man,           
+										tblord_prod.from_dt,
+									 tblpro.dept_id as dept_id,
+                   nvl(tblord_prod.prod_seqno, 999) as prod_seqno,
+                   tblord_main.title_id,
+				           TBLORD_MAIN.TITLE_ZIP_CODE,   
+                  TBLORD_MAIN.TITLE_ADDR,   
+                  TBLORD_MAIN.POST_ZIP_CODE,   
+                  TBLORD_MAIN.POST_ADDR,
+		 tblord_prod.prod_status,
+		 tblord_prod.prod_desc
+								 FROM tblord_main,   
+										tblord_cust,   
+										tblord_prod,
+										tblpro
+								WHERE ( tblord_prod.prod_no = tblpro.prod_no(+)) and 
+										( tblord_main.order_no(+) = tblord_cust.order_no ) and  
+										( tblord_cust.cust_seqno = tblord_prod.cust_seqno (+)) and  
+										( tblord_cust.order_no = tblord_prod.order_no (+) ) and
+										tblord_cust.cust_no in (
+'CUS0000831679',
+'CUS0000031136',
+'CUS0004391207',
+'CUS0000905740',
+'CUS0002446579',
+'CUS0003993882',
+'CUS0006022218',
+'CUS0007162055',
+'CUS0000049040',
+'CUS0000333866',
+'CUS0005459108',
+'CUS0004234290',
+'CUS0005566458',
+'CUS0005591036',
+'CUS0006714003',
+'CUS0004613422',
+'CUS0000807948',
+'CUS0006984944',
+'CUS0000442575',
+'CUS0001411123',
+'CUS0000693379',
+'CUS0002864713',
+'CUS0000535256',
+'CUS0002397785',
+'CUS0005836019',
+'CUS0003838362',
+'CUS0003975944',
+'CUS0002368589'
+) and
+										tblord_main.ORDER_DT between '20160101' and '20161231'
+									 )
+)		 
+   WHERE 1 = 1;
